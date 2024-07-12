@@ -13,17 +13,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class UserController {
     private final UserService userService;
-    private final UseRepository useRepository;
 
     public UserController(UserService userService, UseRepository useRepository) {
-        this.useRepository = useRepository;
         this.userService = userService;
     }
 
     @RequestMapping("/")
     public String getHomePage(Model model) {
-        String test = this.userService.handalHello();
-        model.addAttribute("Page", test);
+        model.addAttribute("Page", "test");
         model.addAttribute("Test1", "Modal");
         return "Page_1";// Tên trong webapp
         // được config đuôi jps trong file config WebMvcConfig.java
@@ -36,9 +33,9 @@ public class UserController {
     }
 
     @RequestMapping(value = "/admin/user/create", method = RequestMethod.POST)
-    public String createUserPage(Model model, @ModelAttribute("newUser") User hoidanit) {
-        System.out.println("Run here" + hoidanit);
-        this.useRepository.save(hoidanit);
+    public String createUserPage(Model model, @ModelAttribute("newUser") User infoUser) {
+        System.out.println("Run here" + infoUser);
+        this.userService.handalSaveUser(infoUser);
         return "Page_1";
     }
 }

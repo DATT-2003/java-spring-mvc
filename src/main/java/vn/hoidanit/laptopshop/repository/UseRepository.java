@@ -7,6 +7,6 @@ import vn.hoidanit.laptopshop.domain.User;
 
 @Repository
 public interface UseRepository extends CrudRepository<User, Long> {
-    User save(User hoidanit);
+    User save(User inforUser);
 
 }
