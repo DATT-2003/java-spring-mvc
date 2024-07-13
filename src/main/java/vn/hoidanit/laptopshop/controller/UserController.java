@@ -1,12 +1,14 @@
 package vn.hoidanit.laptopshop.controller;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import vn.hoidanit.laptopshop.domain.User;
-import vn.hoidanit.laptopshop.repository.UseRepository;
+import vn.hoidanit.laptopshop.repository.UserRepository;
 import vn.hoidanit.laptopshop.service.UserService;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -14,12 +16,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class UserController {
     private final UserService userService;
 
-    public UserController(UserService userService, UseRepository useRepository) {
+    public UserController(UserService userService, UserRepository useRepository) {
         this.userService = userService;
     }
 
     @RequestMapping("/")
     public String getHomePage(Model model) {
+        List<User> arrUsers = this.userService.getAllUserByEmail("dattien1152003@gmail.com");
+        System.out.println(arrUsers);
         model.addAttribute("Page", "test");
         model.addAttribute("Test1", "Modal");
         return "Page_1";// Tên trong webapp
