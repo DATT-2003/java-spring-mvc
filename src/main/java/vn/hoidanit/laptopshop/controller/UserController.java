@@ -11,6 +11,7 @@ import vn.hoidanit.laptopshop.domain.User;
 import vn.hoidanit.laptopshop.repository.UserRepository;
 import vn.hoidanit.laptopshop.service.UserService;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class UserController {
@@ -30,16 +31,23 @@ public class UserController {
         // được config đuôi jps trong file config WebMvcConfig.java
     }
 
-    @RequestMapping("/admin/user")
-    public String getUserPage(Model model) {
+    @RequestMapping("/admin/user/create")
+    public String getCreateUserPage(Model model) {
         model.addAttribute("newUser", new User());
         return "admin/user/create";
+    }
+
+    @RequestMapping("/admin/user")
+    public String getUserPage(Model model) {
+        List<User> users = this.userService.getAllUser();
+        model.addAttribute("users", users);
+        return "/admin/user/table_user";
     }
 
     @RequestMapping(value = "/admin/user/create", method = RequestMethod.POST)
     public String createUserPage(Model model, @ModelAttribute("newUser") User infoUser) {
         System.out.println("Run here" + infoUser);
         this.userService.handalSaveUser(infoUser);
-        return "Page_1";
+        return "redirect:/admin/user";
     }
 }
