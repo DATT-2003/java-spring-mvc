@@ -1,7 +1,7 @@
 package vn.hoidanit.laptopshop.controller.admin;
 
 import java.util.List;
-
+import java.io.File;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,16 +13,26 @@ import vn.hoidanit.laptopshop.repository.UserRepository;
 import vn.hoidanit.laptopshop.service.UserService;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import jakarta.servlet.ServletContext;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 @Controller
 public class UserController {
+    private final ServletContext servletContext;
     private final UserService userService;
 
-    public UserController(UserService userService, UserRepository useRepository) {
+    public UserController(UserService userService, UserRepository useRepository, ServletContext servletContext) {
         this.userService = userService;
+        this.servletContext = servletContext;
     }
 
     @RequestMapping("/")
@@ -56,9 +66,32 @@ public class UserController {
         return "admin/user/detail";
     }
 
-    @RequestMapping(value = "/admin/user/create", method = RequestMethod.POST)
-    public String createUserPage(Model model, @ModelAttribute("newUser") User inforUser) {
-        this.userService.handalSaveUser(inforUser);
+    @PostMapping(value = "/admin/user/create")
+    public String createUserPage(Model model,
+            @ModelAttribute("newUser") User inforUser,
+            @RequestParam("file") MultipartFile file) {
+
+        try {
+            byte[] bytes = file.getBytes();
+            String rootPath = this.servletContext.getRealPath("/resources/images");
+
+            File dir = new File(rootPath + File.separator + "avatar");
+            if (!dir.exists())
+                dir.mkdirs();
+
+            // Create the file on server
+            File serverFile = new File(dir.getAbsolutePath() + File.separator +
+                    +System.currentTimeMillis() + "-" + file.getOriginalFilename());
+
+            BufferedOutputStream stream = new BufferedOutputStream(
+                    new FileOutputStream(serverFile));
+            stream.write(bytes);
+            stream.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // this.userService.handleSaveUser(inforUser);
         return "redirect:/admin/user";
     }
 
