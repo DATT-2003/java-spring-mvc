@@ -24,13 +24,14 @@ public class UserService {
 
     public User handalSaveUser(User user) {
         User inforuser = this.userRepository.save(user);
-        System.out.println(inforuser);
         return inforuser;
     }
-    public User getUserById(long id){
+
+    public User getUserById(long id) {
         return this.userRepository.findById(id);
     }
-    public void deleteUserById(long id){
+
+    public void deleteUserById(long id) {
         this.userRepository.deleteById(id);
     }
 }
