@@ -57,8 +57,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/admin/user/create", method = RequestMethod.POST)
-    public String createUserPage(Model model, @ModelAttribute("newUser") User infoUser) {
-        this.userService.handalSaveUser(infoUser);
+    public String createUserPage(Model model, @ModelAttribute("newUser") User inforUser) {
+        this.userService.handalSaveUser(inforUser);
         return "redirect:/admin/user";
     }
 
@@ -70,12 +70,12 @@ public class UserController {
     }
 
     @PostMapping("admin/user/update")
-    public String postUpdate(Model model, @ModelAttribute("newUser") User infoUser) {
-        User currentUser = this.userService.getUserById(infoUser.getId());
+    public String postUpdate(Model model, @ModelAttribute("newUser") User inforUser) {
+        User currentUser = this.userService.getUserById(inforUser.getId());
         if (currentUser != null) {
-            currentUser.setAddress(infoUser.getAddress());
-            currentUser.setFullName(infoUser.getFullName());
-            currentUser.setPhone(infoUser.getPhone());
+            currentUser.setAddress(inforUser.getAddress());
+            currentUser.setFullName(inforUser.getFullName());
+            currentUser.setPhone(inforUser.getPhone());
             this.userService.handalSaveUser(currentUser);
         }
         return "redirect:/admin/user";
