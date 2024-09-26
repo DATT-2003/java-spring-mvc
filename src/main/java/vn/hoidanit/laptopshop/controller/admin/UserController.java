@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import vn.hoidanit.laptopshop.domain.User;
 import vn.hoidanit.laptopshop.repository.UserRepository;
+import vn.hoidanit.laptopshop.service.UploadService;
 import vn.hoidanit.laptopshop.service.UserService;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,12 +28,13 @@ import java.io.IOException;
 
 @Controller
 public class UserController {
-    private final ServletContext servletContext;
-    private final UserService userService;
 
-    public UserController(UserService userService, UserRepository useRepository, ServletContext servletContext) {
+    private final UserService userService;
+    private final UploadService uploadService;
+
+    public UserController(UserService userService, UserRepository useRepository, UploadService uploadService) {
         this.userService = userService;
-        this.servletContext = servletContext;
+        this.uploadService = uploadService;
     }
 
     @RequestMapping("/")
@@ -70,27 +72,7 @@ public class UserController {
     public String createUserPage(Model model,
             @ModelAttribute("newUser") User inforUser,
             @RequestParam("file") MultipartFile file) {
-
-        try {
-            byte[] bytes = file.getBytes();
-            String rootPath = this.servletContext.getRealPath("/resources/images");
-
-            File dir = new File(rootPath + File.separator + "avatar");
-            if (!dir.exists())
-                dir.mkdirs();
-
-            // Create the file on server
-            File serverFile = new File(dir.getAbsolutePath() + File.separator +
-                    +System.currentTimeMillis() + "-" + file.getOriginalFilename());
-
-            BufferedOutputStream stream = new BufferedOutputStream(
-                    new FileOutputStream(serverFile));
-            stream.write(bytes);
-            stream.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        String avatar = this.uploadService.handalSaveUloadFile(file, "avatar");
         // this.userService.handleSaveUser(inforUser);
         return "redirect:/admin/user";
     }
