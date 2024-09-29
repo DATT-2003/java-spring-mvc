@@ -2,6 +2,9 @@ package vn.hoidanit.laptopshop.controller.admin;
 
 import java.util.List;
 import java.io.File;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -31,10 +34,13 @@ public class UserController {
 
     private final UserService userService;
     private final UploadService uploadService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService, UserRepository useRepository, UploadService uploadService) {
+    public UserController(UserService userService, UserRepository useRepository, UploadService uploadService,
+            PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.uploadService = uploadService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @RequestMapping("/")
@@ -73,7 +79,11 @@ public class UserController {
             @ModelAttribute("newUser") User inforUser,
             @RequestParam("file") MultipartFile file) {
         String avatar = this.uploadService.handalSaveUloadFile(file, "avatar");
-        // this.userService.handleSaveUser(inforUser);
+        String hashPassword = this.passwordEncoder.encode(inforUser.getPassword());
+        inforUser.setAvatar(avatar);
+        inforUser.setPassword(hashPassword);
+        inforUser.setRole(this.userService.getRoleByName(inforUser.getRole().getName()));
+        this.userService.handalSaveUser(inforUser);
         return "redirect:/admin/user";
     }
 
